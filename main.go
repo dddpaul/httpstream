@@ -12,7 +12,9 @@ import (
 func stream(c echo.Context) error {
 	resp := c.Response()
 	gone := resp.CloseNotify()
-	resp.Header().Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	// MIME type has to be "text/event-stream" to allow this application serve as Traefik backend.
+	// See https://github.com/containous/traefik/issues/560 for details.
+	resp.Header().Set(echo.HeaderContentType, "text/event-stream")
 	resp.WriteHeader(http.StatusOK)
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
